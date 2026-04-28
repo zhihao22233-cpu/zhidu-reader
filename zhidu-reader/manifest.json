@@ -1,0 +1,10 @@
+{
+  "id": "zhidu-reader",
+  "name": "ZhiDu 知读",
+  "version": "0.6.0",
+  "minAppVersion": "1.5.0",
+  "description": "基于《如何阅读一本书》四层次方法论的 AI 阅读陪伴代理，把阅读规则转成工具调用驱动的交互流程。",
+  "author": "ziho",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}

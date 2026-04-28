@@ -1,0 +1,1255 @@
+/*
+ * 知读插件样式 · Linear / Anthropic 现代精致版
+ * 所有选择器都以 .zhidu-root / .zhidu-panel 作为根作用域，避免污染主题。
+ * 全部走 Obsidian CSS 变量 + color-mix 派生，亮/暗/自定义主题自动适配。
+ */
+
+/* ─── 设计 tokens ─────────────────────────────────────────────── */
+.zhidu-root {
+  --zd-surface: var(--background-primary);
+  --zd-surface-alt: var(--background-secondary);
+  --zd-surface-raised: var(--background-primary-alt);
+  --zd-surface-hover: var(--background-modifier-hover);
+  --zd-border: var(--background-modifier-border);
+  --zd-border-subtle: color-mix(in srgb, var(--text-normal) 8%, transparent);
+
+  --zd-accent: var(--interactive-accent);
+  --zd-accent-hover: var(--interactive-accent-hover, var(--interactive-accent));
+  --zd-accent-text: var(--text-on-accent);
+  --zd-accent-soft: color-mix(in srgb, var(--interactive-accent) 14%, transparent);
+  --zd-accent-softer: color-mix(in srgb, var(--interactive-accent) 6%, transparent);
+
+  --zd-user-bubble: var(--interactive-accent);
+
+  --zd-text: var(--text-normal);
+  --zd-text-muted: var(--text-muted);
+  --zd-text-faint: var(--text-faint);
+
+  --zd-ok: var(--color-green, #22c55e);
+  --zd-warn: var(--color-yellow, #eab308);
+  --zd-err: var(--color-red, #ef4444);
+  --zd-ok-soft: color-mix(in srgb, var(--color-green, #22c55e) 18%, transparent);
+  --zd-err-soft: color-mix(in srgb, var(--color-red, #ef4444) 18%, transparent);
+  --zd-warn-soft: color-mix(in srgb, var(--color-yellow, #eab308) 22%, transparent);
+
+  --zd-radius-sm: 6px;
+  --zd-radius-md: 10px;
+  --zd-radius-lg: 14px;
+  --zd-radius-pill: 999px;
+
+  --zd-ease: 150ms cubic-bezier(0.2, 0, 0, 1);
+  --zd-ease-slow: 220ms cubic-bezier(0.2, 0, 0, 1);
+
+  --zd-shadow-pop: 0 12px 32px -8px rgba(0, 0, 0, 0.25),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.zhidu-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* 选中文本高亮（避免某些主题压平 ::selection） */
+.zhidu-root ::selection {
+  background: var(--text-selection, rgba(255, 208, 0, 0.45));
+  color: var(--zd-text);
+}
+.zhidu-root ::-moz-selection {
+  background: var(--text-selection, rgba(255, 208, 0, 0.45));
+  color: var(--zd-text);
+}
+
+.zhidu-msg-text,
+.zhidu-tool-args,
+.zhidu-tool-result,
+.zhidu-tool-summary,
+.zhidu-empty,
+.zhidu-history-title,
+.zhidu-history-sub,
+.zhidu-ctx-file,
+.zhidu-ctx-sel,
+.zhidu-md {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.zhidu-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-size: var(--font-ui-small);
+  color: var(--zd-text);
+  background: var(--zd-surface);
+}
+
+/* ─── 顶栏 ────────────────────────────────────────────────────── */
+.zhidu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 9px;
+  border-bottom: 1px solid var(--zd-border-subtle);
+  background: var(--zd-surface);
+  gap: 8px;
+}
+
+.zhidu-title {
+  font-weight: 550;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+  letter-spacing: 0.01em;
+  flex: 1;
+}
+.zhidu-title::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--zd-accent);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px var(--zd-accent-soft);
+}
+.zhidu-session-title {
+  font-weight: 400;
+  font-size: 11.5px;
+  color: var(--zd-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  opacity: 0;
+  transition: opacity var(--zd-ease-slow);
+}
+.zhidu-header:hover .zhidu-session-title {
+  opacity: 1;
+}
+
+/* book chip：pill 形 */
+.zhidu-book-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px 2px 9px;
+  font-size: 11.5px;
+  font-weight: 500;
+  border-radius: var(--zd-radius-pill);
+  background: var(--zd-accent-soft);
+  color: var(--zd-accent);
+  border: 1px solid color-mix(in srgb, var(--zd-accent) 22%, transparent);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+  cursor: pointer;
+  transition: background var(--zd-ease), color var(--zd-ease), border-color var(--zd-ease);
+  line-height: 1.5;
+}
+.zhidu-book-chip:hover {
+  background: color-mix(in srgb, var(--zd-accent) 22%, transparent);
+}
+.zhidu-book-chip-label {
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.zhidu-book-chip-empty {
+  background: transparent;
+  color: var(--zd-text-muted);
+  font-weight: 400;
+  border-color: var(--zd-border);
+}
+.zhidu-book-chip-empty:hover {
+  background: var(--zd-surface-hover);
+  color: var(--zd-text);
+}
+.zhidu-book-unbind {
+  background: transparent;
+  border: none;
+  color: inherit;
+  opacity: 0.55;
+  padding: 0 3px;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  border-radius: 999px;
+  transition: opacity var(--zd-ease), background var(--zd-ease);
+}
+.zhidu-book-unbind:hover {
+  opacity: 1;
+  background: color-mix(in srgb, currentColor 15%, transparent);
+}
+
+/* 顶栏右侧操作区 */
+.zhidu-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+/* 上下文占用指示（紧凑圆角 chip，3 级色） */
+.zhidu-ctx-meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  margin-right: 6px;
+  border-radius: var(--zd-radius-pill);
+  font-size: 10.5px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  background: var(--zd-surface-alt);
+  color: var(--zd-text-muted);
+  border: 1px solid var(--zd-border-subtle);
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+  transition: background var(--zd-ease), color var(--zd-ease);
+}
+.zhidu-ctx-meter-ok {
+  /* 默认样式 */
+}
+.zhidu-ctx-meter-warn {
+  background: var(--zd-warn-soft);
+  color: var(--zd-warn);
+  border-color: color-mix(in srgb, var(--zd-warn) 35%, transparent);
+}
+.zhidu-ctx-meter-hot {
+  background: var(--zd-err-soft);
+  color: var(--zd-err);
+  border-color: color-mix(in srgb, var(--zd-err) 40%, transparent);
+}
+.zhidu-ctx-meter-badge {
+  font-size: 9.5px;
+  opacity: 0.75;
+}
+
+/* P1 决策落地：web_search 软配额计数器（紧贴 ctx-meter 左侧） */
+.zhidu-ws-meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  margin-right: 6px;
+  border-radius: var(--zd-radius-pill);
+  font-size: 10.5px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  background: var(--zd-surface-alt);
+  color: var(--zd-text-muted);
+  border: 1px solid var(--zd-border-subtle);
+  cursor: default;
+  user-select: none;
+  white-space: nowrap;
+}
+.zhidu-ws-meter-over {
+  background: var(--zd-err-soft);
+  color: var(--zd-err);
+  border-color: color-mix(in srgb, var(--zd-err) 40%, transparent);
+}
+
+/* Phase 2 陪读模式 chip */
+.zhidu-mode-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 4px 3px 8px;
+  margin-right: 6px;
+  border-radius: var(--zd-radius-pill);
+  font-size: 10.5px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--zd-accent) 16%, var(--zd-surface-alt));
+  color: var(--zd-accent);
+  border: 1px solid color-mix(in srgb, var(--zd-accent) 35%, transparent);
+  user-select: none;
+  white-space: nowrap;
+}
+.zhidu-mode-socratic {
+  /* 默认 accent 风格已合适 */
+}
+.zhidu-mode-recall {
+  background: color-mix(in srgb, var(--zd-warn) 16%, var(--zd-surface-alt));
+  color: var(--zd-warn);
+  border-color: color-mix(in srgb, var(--zd-warn) 35%, transparent);
+}
+.zhidu-mode-exit {
+  background: transparent;
+  border: none;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 1;
+}
+.zhidu-mode-exit:hover {
+  opacity: 1;
+}
+
+/* 编辑器上下文条 */
+.zhidu-context-strip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--zd-border-subtle);
+  background: var(--zd-surface-alt);
+  font-size: 11px;
+  color: var(--zd-text-muted);
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--zd-ease), color var(--zd-ease);
+}
+.zhidu-context-strip:hover {
+  background: var(--zd-surface-hover);
+}
+.zhidu-context-strip.active {
+  background: var(--zd-accent-soft);
+  color: var(--zd-text);
+  border-bottom-color: color-mix(in srgb, var(--zd-accent) 40%, transparent);
+}
+.zhidu-ctx-icon {
+  font-size: 12px;
+  opacity: 0.85;
+}
+.zhidu-ctx-file {
+  font-weight: 500;
+  color: var(--zd-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+.zhidu-ctx-sel {
+  color: var(--zd-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+.zhidu-ctx-empty {
+  color: var(--zd-text-faint);
+  font-style: italic;
+}
+.zhidu-ctx-toggle {
+  margin-left: auto;
+  padding: 2px 9px;
+  border-radius: var(--zd-radius-pill);
+  border: 1px solid var(--zd-border);
+  flex-shrink: 0;
+  font-size: 10px;
+  line-height: 1.4;
+  transition: background var(--zd-ease), border-color var(--zd-ease), color var(--zd-ease);
+}
+.zhidu-context-strip.active .zhidu-ctx-toggle {
+  background: var(--zd-accent);
+  color: var(--zd-accent-text);
+  border-color: transparent;
+}
+
+/* ─── 历史侧栏 ───────────────────────────────────────────────── */
+.zhidu-history {
+  max-height: 280px;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--zd-border-subtle);
+  background: var(--zd-surface-alt);
+}
+.zhidu-history-empty {
+  padding: 12px;
+  color: var(--zd-text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+.zhidu-history-group + .zhidu-history-group {
+  border-top: 1px solid var(--zd-border-subtle);
+}
+.zhidu-history-group-head {
+  padding: 5px 12px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--zd-text-muted);
+  background: var(--zd-surface);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid var(--zd-border-subtle);
+}
+.zhidu-history-group-count {
+  margin-left: 4px;
+  font-weight: 400;
+  opacity: 0.7;
+  text-transform: none;
+}
+.zhidu-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  gap: 8px;
+  transition: background var(--zd-ease);
+  cursor: pointer;
+}
+.zhidu-history-item:hover {
+  background: var(--zd-surface-hover);
+}
+.zhidu-history-item.active {
+  background: var(--zd-accent-soft);
+}
+.zhidu-history-item.active::before {
+  content: "";
+  position: absolute;
+  width: 3px;
+}
+.zhidu-history-meta {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+.zhidu-history-title {
+  font-size: 12.5px;
+  color: var(--zd-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+.zhidu-history-sub {
+  font-size: 10.5px;
+  color: var(--zd-text-faint);
+  margin-top: 1px;
+}
+
+/* ─── 消息区 ──────────────────────────────────────────────────── */
+.zhidu-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+.zhidu-empty {
+  color: var(--zd-text-muted);
+  line-height: 1.7;
+  padding: 8px 2px;
+  font-size: 12.5px;
+}
+.zhidu-empty p {
+  margin: 6px 0;
+}
+.zhidu-empty ul {
+  margin: 8px 0 10px 0;
+  padding-left: 18px;
+  list-style: none;
+}
+.zhidu-empty ul li {
+  position: relative;
+  padding: 2px 0;
+}
+.zhidu-empty ul li::before {
+  content: "—";
+  position: absolute;
+  left: -14px;
+  color: var(--zd-text-faint);
+}
+.zhidu-empty code {
+  background: var(--zd-accent-soft);
+  color: var(--zd-accent);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-family: var(--font-monospace);
+}
+
+/* ─── 消息气泡 ───────────────────────────────────────────────── */
+.zhidu-msg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+/* 用户/助手切换时给多一点呼吸 */
+.zhidu-msg-user + .zhidu-msg-assistant,
+.zhidu-msg-assistant + .zhidu-msg-user {
+  margin-top: 4px;
+}
+
+/* 角色标签：视觉上隐藏（用对齐+色带暗示），保留 DOM 供辅助技术 */
+.zhidu-msg-role {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.zhidu-msg-text {
+  line-height: 1.62;
+  padding: 10px 13px;
+  border-radius: var(--zd-radius-md);
+  font-size: 13px;
+  /* 纯文本气泡（用户消息）保持 pre-wrap；md 容器会覆盖 */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* 用户：右对齐 + accent 色 */
+.zhidu-msg-user {
+  align-items: flex-end;
+}
+.zhidu-msg-user .zhidu-msg-text {
+  background: var(--zd-user-bubble);
+  color: var(--zd-accent-text);
+  align-self: flex-end;
+  max-width: 86%;
+  border-radius: var(--zd-radius-lg) var(--zd-radius-lg) 4px var(--zd-radius-lg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* AI：左对齐 + 透明背景 + 左侧细窄 accent 色带 */
+.zhidu-msg-assistant {
+  align-items: flex-start;
+}
+.zhidu-msg-assistant .zhidu-msg-text {
+  background: transparent;
+  color: var(--zd-text);
+  padding: 2px 0 2px 14px;
+  position: relative;
+  max-width: 100%;
+  border-radius: 0;
+  white-space: normal;
+}
+.zhidu-msg-assistant .zhidu-msg-text::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--zd-accent) 45%, transparent);
+}
+
+/* 引用 chips */
+.zhidu-ref-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 2px;
+  user-select: text;
+}
+.zhidu-msg-user .zhidu-ref-chips {
+  justify-content: flex-end;
+}
+.zhidu-ref-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: var(--zd-radius-pill);
+  background: var(--zd-surface-alt);
+  color: var(--zd-text-muted);
+  font-size: 10.5px;
+  border: 1px solid var(--zd-border-subtle);
+  line-height: 1.4;
+}
+
+/* ─── Markdown 渲染区（.zhidu-md）────────────────────────────── */
+.zhidu-md {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--zd-text);
+}
+.zhidu-md > *:first-child {
+  margin-top: 0;
+}
+.zhidu-md > *:last-child {
+  margin-bottom: 0;
+}
+.zhidu-md p {
+  margin: 0.4em 0;
+}
+.zhidu-md h1,
+.zhidu-md h2,
+.zhidu-md h3,
+.zhidu-md h4 {
+  margin: 0.7em 0 0.35em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.zhidu-md h1 {
+  font-size: 15.5px;
+}
+.zhidu-md h2 {
+  font-size: 14px;
+}
+.zhidu-md h3 {
+  font-size: 13.5px;
+}
+.zhidu-md h4 {
+  font-size: 13px;
+  color: var(--zd-text-muted);
+}
+.zhidu-md ul,
+.zhidu-md ol {
+  margin: 0.35em 0;
+  padding-left: 1.35em;
+}
+.zhidu-md li {
+  margin: 2px 0;
+}
+.zhidu-md li > p {
+  margin: 0.15em 0;
+}
+.zhidu-md code {
+  font-family: var(--font-monospace);
+  font-size: 0.88em;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--zd-accent-soft);
+  color: var(--zd-text);
+}
+.zhidu-md pre {
+  margin: 0.6em 0;
+  padding: 10px 12px;
+  border-radius: var(--zd-radius-sm);
+  background: var(--background-code, var(--background-modifier-form-field));
+  border: 1px solid var(--zd-border-subtle);
+  overflow-x: auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.zhidu-md pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  color: inherit;
+}
+.zhidu-md blockquote {
+  margin: 0.5em 0;
+  padding: 0.2em 0 0.2em 11px;
+  border-left: 2px solid var(--zd-accent);
+  color: var(--zd-text-muted);
+  background: var(--zd-accent-softer);
+  border-radius: 0 var(--zd-radius-sm) var(--zd-radius-sm) 0;
+}
+.zhidu-md blockquote > *:first-child {
+  margin-top: 0;
+}
+.zhidu-md blockquote > *:last-child {
+  margin-bottom: 0;
+}
+.zhidu-md a {
+  color: var(--zd-accent);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--zd-accent) 30%, transparent);
+  transition: border-color var(--zd-ease);
+}
+.zhidu-md a:hover {
+  border-bottom-color: var(--zd-accent);
+}
+.zhidu-md table {
+  font-size: 12px;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  width: 100%;
+}
+.zhidu-md th,
+.zhidu-md td {
+  border: 1px solid var(--zd-border);
+  padding: 5px 9px;
+  text-align: left;
+}
+.zhidu-md th {
+  background: var(--zd-surface-alt);
+  font-weight: 600;
+}
+.zhidu-md hr {
+  border: 0;
+  height: 1px;
+  background: var(--zd-border-subtle);
+  margin: 1em 0;
+}
+.zhidu-md img {
+  max-width: 100%;
+  border-radius: var(--zd-radius-sm);
+}
+
+/* ─── 思考过程折叠块 ──────────────────────────────────────── */
+/* 视觉比工具卡更轻：背景近似底色、无强对比，避免抢戏正文。
+   流式中心 chevron 与 💭 都给一个轻微 pulse 暗示"还在思考"。 */
+.zhidu-thinking {
+  margin-top: 6px;
+  border: 1px dashed var(--zd-border-subtle);
+  border-radius: var(--zd-radius-md);
+  background: color-mix(in srgb, var(--zd-text-faint) 4%, transparent);
+  overflow: hidden;
+  transition: border-color var(--zd-ease), background var(--zd-ease);
+}
+.zhidu-thinking:hover {
+  border-color: var(--zd-border);
+}
+.zhidu-thinking.is-streaming {
+  border-style: solid;
+  background: color-mix(in srgb, var(--zd-accent) 4%, transparent);
+}
+
+.zhidu-thinking-head {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 11.5px;
+  color: var(--zd-text-muted);
+  line-height: 1.45;
+  min-height: 30px;
+  transition: background var(--zd-ease);
+}
+.zhidu-thinking-head:hover {
+  background: var(--zd-surface-hover);
+}
+.zhidu-thinking-head:focus-visible {
+  outline: 2px solid var(--zd-accent);
+  outline-offset: -2px;
+}
+
+.zhidu-thinking-chevron {
+  flex-shrink: 0;
+  color: var(--zd-text-faint);
+  font-size: 10px;
+  width: 10px;
+  text-align: center;
+}
+.zhidu-thinking-icon {
+  flex-shrink: 0;
+  font-size: 12px;
+  opacity: 0.7;
+}
+.zhidu-thinking.is-streaming .zhidu-thinking-icon {
+  animation: zhidu-pulse 1.6s ease-in-out infinite;
+}
+.zhidu-thinking-label {
+  flex-shrink: 0;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.zhidu-thinking-preview {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--zd-text-faint);
+  font-size: 11px;
+  font-style: italic;
+}
+
+/* 折叠动画：与工具卡共用 grid-rows 0fr → 1fr 思路 */
+.zhidu-thinking-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--zd-ease-slow);
+}
+.zhidu-thinking.is-open .zhidu-thinking-body {
+  grid-template-rows: 1fr;
+}
+.zhidu-thinking-body-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 10px;
+}
+.zhidu-thinking.is-open .zhidu-thinking-body-inner {
+  padding: 4px 10px 10px;
+  border-top: 1px dashed var(--zd-border-subtle);
+}
+.zhidu-thinking-text {
+  margin: 0;
+  padding: 8px 10px;
+  background: var(--zd-surface-alt);
+  border-radius: var(--zd-radius-sm);
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--zd-text-muted);
+}
+
+/* ─── 工具调用卡片 ──────────────────────────────────────────── */
+.zhidu-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.zhidu-tool {
+  border: 1px solid var(--zd-border-subtle);
+  border-radius: var(--zd-radius-md);
+  background: var(--zd-surface-raised);
+  overflow: hidden;
+  transition: border-color var(--zd-ease), background var(--zd-ease);
+}
+.zhidu-tool:hover {
+  border-color: var(--zd-border);
+}
+.zhidu-tool.is-open {
+  background: var(--zd-surface);
+}
+
+/* headline 是一个 button：统一高度、无默认样式 */
+.zhidu-tool-head {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--zd-text);
+  line-height: 1.45;
+  min-height: 32px;
+  transition: background var(--zd-ease);
+}
+.zhidu-tool-head:hover {
+  background: var(--zd-surface-hover);
+}
+.zhidu-tool.is-empty .zhidu-tool-head {
+  cursor: default;
+}
+.zhidu-tool.is-empty .zhidu-tool-head:hover {
+  background: transparent;
+}
+.zhidu-tool-head:focus-visible {
+  outline: 2px solid var(--zd-accent);
+  outline-offset: -2px;
+}
+
+.zhidu-tool-chevron {
+  flex-shrink: 0;
+  color: var(--zd-text-faint);
+  font-size: 10px;
+  width: 10px;
+  text-align: center;
+  transition: color var(--zd-ease);
+}
+.zhidu-tool-head:hover .zhidu-tool-chevron {
+  color: var(--zd-text-muted);
+}
+
+.zhidu-tool-status-dot {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+}
+.zhidu-tool-status-dot-ok {
+  background: var(--zd-ok-soft);
+  color: var(--zd-ok);
+}
+.zhidu-tool-status-dot-fail {
+  background: var(--zd-err-soft);
+  color: var(--zd-err);
+}
+.zhidu-tool-status-dot-running {
+  background: var(--zd-accent-soft);
+  color: var(--zd-accent);
+  animation: zhidu-pulse 1.2s ease-in-out infinite;
+}
+@keyframes zhidu-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.zhidu-tool-name {
+  font-family: var(--font-monospace);
+  font-size: 11.5px;
+  color: var(--zd-text);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.zhidu-tool-summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--zd-text-muted);
+  font-size: 11.5px;
+}
+
+.zhidu-tool-badge {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: var(--zd-radius-pill);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  margin-left: auto;
+}
+.zhidu-tool-badge-running {
+  background: var(--zd-accent-soft);
+  color: var(--zd-accent);
+}
+.zhidu-tool-badge-ok {
+  background: var(--zd-ok-soft);
+  color: var(--zd-ok);
+}
+.zhidu-tool-badge-fail {
+  background: var(--zd-err-soft);
+  color: var(--zd-err);
+}
+
+/* 折叠动画：grid-rows 0fr → 1fr（现代浏览器平滑过渡） */
+.zhidu-tool-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--zd-ease-slow);
+}
+.zhidu-tool.is-open .zhidu-tool-body {
+  grid-template-rows: 1fr;
+}
+.zhidu-tool-body-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 10px;
+}
+.zhidu-tool.is-open .zhidu-tool-body-inner {
+  padding: 2px 10px 10px;
+  border-top: 1px solid var(--zd-border-subtle);
+}
+
+.zhidu-tool-section {
+  margin-top: 8px;
+}
+.zhidu-tool-section:first-child {
+  margin-top: 6px;
+}
+.zhidu-tool-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--zd-text-faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.zhidu-tool-args,
+.zhidu-tool-result {
+  margin: 0;
+  padding: 8px 10px;
+  background: var(--zd-surface-alt);
+  border: 1px solid var(--zd-border-subtle);
+  border-radius: var(--zd-radius-sm);
+  max-height: 280px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-monospace);
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--zd-text);
+}
+.zhidu-tool-result {
+  background: var(--background-modifier-form-field);
+}
+
+/* ─── 多窗口 ──────────────────────────────────────────────────── */
+/* 外层容器：撑满 root 高度；每个窗口槽（slot）默认 display:none，激活那一个变 flex */
+.zhidu-multi {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.zhidu-window-slot {
+  display: none;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.zhidu-window-slot.is-active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 窗口标签栏：位于消息区与输入区之间（类似 Claudian 的 [1] [2] 按钮） */
+.zhidu-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px 4px;
+  border-top: 1px solid var(--zd-border-subtle);
+  background: var(--zd-surface);
+  flex-wrap: wrap;
+}
+.zhidu-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: var(--zd-radius-sm);
+  border: 1px solid var(--zd-border);
+  background: var(--zd-surface-alt);
+  color: var(--zd-text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--zd-ease), color var(--zd-ease), background var(--zd-ease);
+}
+.zhidu-tab:hover {
+  background: var(--zd-surface-hover);
+  color: var(--zd-text);
+}
+.zhidu-tab.active {
+  border-color: var(--zd-accent);
+  color: var(--zd-accent);
+  background: var(--zd-accent-softer);
+}
+.zhidu-tab-num {
+  font-weight: 600;
+  line-height: 1;
+}
+.zhidu-tab-close {
+  display: none;
+  margin-left: 2px;
+  border: none;
+  background: transparent;
+  color: var(--zd-text-muted);
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 11px;
+  line-height: 1;
+  border-radius: 3px;
+}
+.zhidu-tab:hover .zhidu-tab-close {
+  display: inline-flex;
+  align-items: center;
+}
+.zhidu-tab-close:hover {
+  color: var(--zd-err);
+  background: var(--zd-err-soft);
+}
+.zhidu-tab-add {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: var(--zd-radius-sm);
+  border: 1px dashed var(--zd-border);
+  background: transparent;
+  color: var(--zd-text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition: border-color var(--zd-ease), color var(--zd-ease);
+}
+.zhidu-tab-add:hover {
+  color: var(--zd-accent);
+  border-color: var(--zd-accent);
+}
+
+/* ─── 输入区 ──────────────────────────────────────────────────── */
+.zhidu-input-wrap {
+  position: relative;
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--zd-border-subtle);
+  background: var(--zd-surface);
+}
+.zhidu-input {
+  width: 100%;
+  resize: vertical;
+  min-height: 58px;
+  padding: 10px 12px;
+  border-radius: var(--zd-radius-md);
+  border: 1px solid var(--zd-border);
+  background: var(--zd-surface-alt);
+  color: var(--zd-text);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.55;
+  outline: none;
+  transition: border-color var(--zd-ease), box-shadow var(--zd-ease), background var(--zd-ease);
+}
+.zhidu-input::placeholder {
+  color: var(--zd-text-faint);
+}
+.zhidu-input:focus {
+  border-color: var(--zd-accent);
+  background: var(--zd-surface);
+  box-shadow: 0 0 0 3px var(--zd-accent-soft);
+}
+.zhidu-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.zhidu-input-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+/* 按钮体系 */
+.zhidu-btn {
+  padding: 5px 12px;
+  border-radius: var(--zd-radius-sm);
+  border: 1px solid var(--zd-border);
+  background: var(--zd-surface);
+  color: var(--zd-text);
+  cursor: pointer;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  transition: background var(--zd-ease), border-color var(--zd-ease), color var(--zd-ease),
+    transform var(--zd-ease), opacity var(--zd-ease);
+}
+.zhidu-btn:hover {
+  background: var(--zd-surface-hover);
+  border-color: color-mix(in srgb, var(--zd-text-normal) 18%, var(--zd-border));
+}
+.zhidu-btn:active {
+  transform: translateY(0.5px);
+}
+.zhidu-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.zhidu-btn.cta {
+  background: var(--zd-accent);
+  color: var(--zd-accent-text);
+  border-color: transparent;
+  padding: 6px 14px;
+  font-weight: 550;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.zhidu-btn.cta:hover {
+  background: var(--zd-accent-hover);
+  filter: brightness(1.04);
+}
+.zhidu-btn.warn {
+  background: var(--zd-err);
+  color: #fff;
+  border-color: transparent;
+  padding: 6px 14px;
+}
+.zhidu-btn.warn:hover {
+  filter: brightness(1.06);
+}
+.zhidu-btn.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--zd-text-muted);
+  padding: 4px 9px;
+}
+.zhidu-btn.ghost:hover {
+  background: var(--zd-surface-hover);
+  color: var(--zd-text);
+  border-color: transparent;
+}
+
+/* 补全菜单 */
+.zhidu-completions {
+  position: absolute;
+  bottom: calc(100% - 6px);
+  left: 12px;
+  right: 12px;
+  background: var(--zd-surface);
+  border: 1px solid var(--zd-border);
+  border-radius: var(--zd-radius-md);
+  max-height: 220px;
+  overflow-y: auto;
+  box-shadow: var(--zd-shadow-pop);
+  z-index: 10;
+  padding: 4px;
+  animation: zhidu-completions-in 140ms cubic-bezier(0.2, 0, 0, 1);
+}
+@keyframes zhidu-completions-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.zhidu-completion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: var(--zd-radius-sm);
+  gap: 10px;
+  transition: background var(--zd-ease);
+}
+.zhidu-completion:hover {
+  background: var(--zd-accent-soft);
+}
+.zhidu-completion .cmd {
+  font-family: var(--font-monospace);
+  color: var(--zd-accent);
+  font-size: 11.5px;
+  flex-shrink: 0;
+}
+.zhidu-completion .hint {
+  color: var(--zd-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+/* kbd 提示键 */
+.kbd {
+  font-family: var(--font-monospace);
+  padding: 0 5px;
+  border-radius: 3px;
+  background: color-mix(in srgb, #fff 18%, transparent);
+  font-size: 10px;
+  line-height: 1.4;
+  opacity: 0.92;
+}
