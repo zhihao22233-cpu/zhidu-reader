@@ -61,32 +61,24 @@
 
 ## API Key 配置
 
-插件靠大模型工作，需要一把"钥匙"。**默认接智谱 GLM**（注册简单、新用户有免费额度）：
+插件靠大模型工作，需要一把"钥匙"。默认接智谱 GLM（注册简单、新用户有免费额度）：
 
 1. 打开 [bigmodel.cn](https://bigmodel.cn/) 注册并登录（手机号即可）
 2. 进控制台 → API Keys → 创建一个新的 Key
 3. 把 Key 填到插件设置里
 
-| 默认模型 | 用途 |
-|---------|------|
-| `glm-4.6` | 主模型（对话和推理） |
-| `glm-4-flash` | 摘要模型（高并发处理） |
-
 **也支持其他服务商**：DeepSeek、OpenRouter、月之暗面等。在插件设置里切换"服务商"即可。
 
 ---
 
-## 配套工具（强烈推荐）
+## 配套工具
 
-本插件只认 `.md` 格式的书。下面两个免费工具可以补完整个阅读链路：
-
-- 📚 **找书**：[annas-archive.2rdh.com](https://annas-archive.2rdh.com/)  
-  Anna's Archive 镜像站。搜书名 → 优先选 EPUB 下载。
+本插件只认 `.md` 格式的书。如果你手头是 PDF / EPUB，可以用：
 
 - 📄 **PDF / EPUB 转 Markdown**：[mineru.net](https://mineru.net/)  
   上海人工智能实验室开源项目 MinerU 的在线版。中文书、扫描版、含公式表格的复杂版式识别效果都很好。
 
-完整流程：annas-archive 下载 PDF → mineru.net 转 md → 放到仓库 `book-library/` 目录 → 在 Obsidian 里 `/inspect 书名` 开始读。
+把转好的 md 放到仓库 `book-library/` 目录，在 Obsidian 里 `/inspect 书名` 即可开始读。
 
 ---
 
@@ -126,4 +118,3 @@
 
 - 阅读方法论：Mortimer J. Adler & Charles Van Doren，《如何阅读一本书》（*How to Read a Book*）
 - 笔记系统：[Obsidian](https://obsidian.md)
-- 默认大模型：[智谱 AI](https://bigmodel.cn) GLM 系列
